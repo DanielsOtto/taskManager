@@ -5,11 +5,24 @@ import userController from '../controllers/user/index.js';
 const routerUser = createRouter();
 // CONECTADA  EN  SERVER
 
-routerUser.get('/info', auth, userController.userInfo); // user info
-// routerSession.get('/projects', auth ,); //devuelve los proyectos del usuario
-// routerSession.post() // agregar proyectos al user
-// routerSession.post() // eliminar proyectos del user
-// routerSession.post() // modificar estado tarea  terminado/en curso
+routerUser.use(auth);
+routerUser.get('/info', userController.userInfo); // user info
 
-// agregar rol admin ?
+routerUser.get('/project', userController.getAllProjects); //listar los proyectos del usuario
+routerUser.post('/project', userController.saveProject); // agregar proyectos al user -- 
+routerUser.delete('/project/:idP', userController.deleteUserProject); // eliminar proyectos del user
+
+routerUser.get('/task', userController.getAllTasks); // listar las tareas del user
+routerUser.post('/task', userController.saveTask); // agregar tareas del user
+routerUser.delete('/:idT/task', userController.deleteUserTask) // eliminar tareas del user
+
+//-- tags
+// routerUser.get() // ver tags del usuario
+// routerUser.get() // ver tag del usuario
+// routerUser.get() // crear tag de la task del User
+// routerUser.get() // editar tag de la task del User
+// routerUser.get() // borrar tag de la task del User
+
+// routerUser.post() // modificar estado tarea  terminado/en curso
+
 export default routerUser;

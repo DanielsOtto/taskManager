@@ -1,5 +1,5 @@
-import { logger } from '../../config/pino.js';
 import { UserService } from './user.services.js';
+import userList from '../../repositories/user.repository/index.js';
 
-const userService = new UserService();
+const userService = new UserService(userList);
 export default userService;

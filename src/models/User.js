@@ -1,5 +1,8 @@
 import { DataTypes } from 'sequelize';
 import db from '../database/sequelize.db.js';
+import Project from './Project.js';
+import Tag from './Tag.js';
+import Task from './Task.js';
 
 
 const User = db.define('User', {
@@ -36,17 +39,8 @@ const User = db.define('User', {
   }
 }, { tableName: 'users' });
 
-
-// User.hasMany(Task, { // un User va a tener muchas tareas
-//   foreignKey: 'taskID', // crea el atributo taskID en Task
-//   sourceKey: 'id' // y lo enlaza con el id del User
-// });
-
-// Task.belongsTo(User, { // Muchas Task pueden pertenecer a un solo User
-//   foreignKey: 'taskID',
-//   targetKey: 'id'
-// });
-
+User.hasMany(Project);
+User.hasMany(Task);
+User.hasMany(Tag);
 
 export default User;
-// va a revisar las inserciones de manera segura

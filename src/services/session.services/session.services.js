@@ -1,15 +1,18 @@
 import { logger } from '../../config/pino.js';
 import { generateToken } from '../../utils/auth.js';
-import userList from '../../repositories/user.repository/index.js';
 import { comparePassword, encryptPassword } from '../../utils/hashPass.js';
 
 
 export class SessionService {
+  #userRepository;
+  constructor(userList) {
+    this.#userRepository = userList;
+  }
 
   async createUser({ email, password, name, lastname }) {
     try {
       const pass = encryptPassword(password);
-      const user = await userList.createUser(email, pass, name, lastname);
+      const user = await this.#userRepository.createUser(email, pass, name, lastname);
       if (!user) {
         throw new Error('credenciales incorrectas ?')
       }

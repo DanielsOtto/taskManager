@@ -1,14 +1,17 @@
 import { logger } from '../../config/pino.js';
-import projectList from '../../repositories/project.repository/index.js';
 // errores
 
 // INDEX CREADO
 
 export class ProjectService {
+  #projectRepository;
+  constructor(projectList) {
+    this.#projectRepository = projectList;
+  }
 
   async getAll() {
     try {
-      return await projectList.getAll();
+      return await this.#projectRepository.getAll();
     } catch (e) {
       console.log(e);
       throw e;
@@ -17,7 +20,7 @@ export class ProjectService {
 
   async getOne(id) {
     try {
-      return await projectList.getOne(id);
+      return await this.#projectRepository.getOne(id);
     } catch (e) {
       console.log(e);
       throw e;
@@ -26,7 +29,7 @@ export class ProjectService {
 
   async saveOne({ name, description }) {
     try {
-      return await projectList.saveOne(name, description);
+      return await this.#projectRepository.saveOne(name, description);
     } catch (e) {
       console.log(e);
       throw e;
@@ -35,7 +38,7 @@ export class ProjectService {
 
   async editOne(id, body) {
     try {
-      const project = await projectList.getOne(id);
+      const project = await this.#projectRepository.getOne(id);
       if (!body.name) {
         body.name = project.name;
       }
@@ -46,7 +49,7 @@ export class ProjectService {
         body.done = project.done;
       }
 
-      const editProject = await projectList.editOne(id, body);
+      const editProject = await this.#projectRepository.editOne(id, body);
       return (editProject);
     } catch (e) {
       console.log(e);
@@ -56,7 +59,7 @@ export class ProjectService {
 
   async addTask(idProject, idTask) {
     try {
-      return await projectList.addTask(idProject, idTask);
+      return await this.#projectRepository.addTask(idProject, idTask);
     } catch (e) {
       console.log(e);
       throw e;
@@ -65,7 +68,7 @@ export class ProjectService {
 
   async deleteProject(id) {
     try {
-      await projectList.deleteProject(id);
+      await this.#projectRepository.deleteProject(id);
     } catch (e) {
       console.log(e);
       throw e;
@@ -74,7 +77,7 @@ export class ProjectService {
 
   async deleteTaskInProject(idProject, idTask) {
     try {
-      await projectList.deleteTaskInProject(idProject, idTask);
+      await this.#projectRepository.deleteTaskInProject(idProject, idTask);
     } catch (e) {
       console.log(e);
       throw e;

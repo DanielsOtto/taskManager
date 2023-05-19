@@ -7,5 +7,5 @@ try {
   await server.connect({ port: 8080 }); // cambiar puerto
   // connectSQL();
 } catch (e) {
-  console.log(e);
+  console.error(e);
 }

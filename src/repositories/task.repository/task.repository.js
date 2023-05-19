@@ -4,7 +4,7 @@ export class TaskList {
     this.#table = table;
   }
 
-  async createTask() {
+  async createTask(name, description) {
     try {
       const task = await this.#table.create({
         name,
@@ -12,18 +12,55 @@ export class TaskList {
       });
       return task;
     } catch (e) {
-      // console.log(e);
+      console.error(e);
+      throw e;
+    }
+  }
+
+  async getAll() {
+    try {
+      return await this.#table.findAll();
+    } catch (e) {
+      console.error(e);
       throw e;
     }
   }
 
   async getOne(id) {
     try {
-      const task = await this.#table.findByPk(id);
-      console.log(task);
-      return task;
+      return await this.#table.findByPk(id);
     } catch (e) {
-      console.log(e);
+      console.error(e);
+      throw e;
+    }
+  }
+
+  async editTask(id, name, description, done) {
+    try {
+      await this.#table.update({
+        name,
+        description,
+        done
+      }, {
+        where: {
+          id
+        }
+      });
+    } catch (e) {
+      console.error(e);
+      throw e;
+    }
+  }
+
+  async deleteTask(id) {
+    try {
+      await this.#table.destroy({
+        where: {
+          id
+        }
+      });
+    } catch (e) {
+      console.error(e);
       throw e;
     }
   }
