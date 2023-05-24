@@ -10,13 +10,12 @@ export class ProjectList {
   async getAll() {
     try {
       const projects = await this.#table.findAll();
-      console.log(projects);
       if (projects.length === 0) {
         throw new Error('No hay proyectos');
       }
       return projects;
     } catch (e) {
-      console.log(e);
+      console.error(e);
       throw e;
     }
   }
@@ -29,7 +28,7 @@ export class ProjectList {
       }
       return project;
     } catch (e) {
-      console.log(e);
+      console.error(e);
       throw e;
     }
   }
@@ -42,13 +41,14 @@ export class ProjectList {
       });
       return project;
     } catch (e) {
+      console.error(e);
       throw new Error(e);
     }
   }
 
   async editOne(id, { name, description, done }) {
     try {
-      const project = await this.#table.update({
+      await this.#table.update({
         name,
         description,
         done
@@ -57,9 +57,23 @@ export class ProjectList {
           id
         }
       });
-      return project;
     } catch (e) {
-      console.log(e);
+      console.error(e);
+      throw e;
+    }
+  }
+
+  async getTasksProject(idProject) { // new 24/05
+    try {
+      const project = await this.getOne(idProject);
+      const tasks = await project.getTasks({
+        attributes: ['id', 'name', 'description', 'done'],
+        joinTableAttributes: [],
+      });
+      if (!tasks) throw new Error('el proyecto no tiene tareas');
+      return tasks;
+    } catch (e) {
+      console.error(e);
       throw e;
     }
   }
@@ -71,7 +85,7 @@ export class ProjectList {
       await project.addTask(task);
       return task;
     } catch (e) {
-      console.log(e);
+      console.error(e);
       throw e;
     }
   }
@@ -84,7 +98,7 @@ export class ProjectList {
         }
       });
     } catch (e) {
-      console.log(e);
+      console.error(e);
       throw e;
     }
   }
@@ -93,10 +107,27 @@ export class ProjectList {
     try {
       const project = await this.getOne(idProject);
       const task = await this.#taskTable.findByPk(idTask);
-      const queonda = await project.removeTask(task);
-      console.log(queonda);
+      const response = await project.removeTask(task);
+      if (response === 0) throw new Error('No se elimino nada!');
     } catch (e) {
-      console.log(e);
+      console.error(e);
+      throw e;
+    }
+  }
+
+  async getUserProject(idP) { // agregado 23/05 
+    try {
+      const project = await this.#table.findOne({
+        where: {
+          id: idP,
+        }
+      });
+      if (!project) {
+        throw new Error('PROJECT repositorio no se encontro nada');
+      }
+      return project;
+    } catch (e) {
+      console.error(e);
       throw e;
     }
   }

@@ -1,7 +1,6 @@
 import { logger } from '../../config/pino.js';
 // errores
 
-// INDEX CREADO
 
 export class ProjectService {
   #projectRepository;
@@ -13,7 +12,7 @@ export class ProjectService {
     try {
       return await this.#projectRepository.getAll();
     } catch (e) {
-      console.log(e);
+      console.error(e);
       throw e;
     }
   }
@@ -22,7 +21,7 @@ export class ProjectService {
     try {
       return await this.#projectRepository.getOne(id);
     } catch (e) {
-      console.log(e);
+      console.error(e);
       throw e;
     }
   }
@@ -31,14 +30,14 @@ export class ProjectService {
     try {
       return await this.#projectRepository.saveOne(name, description);
     } catch (e) {
-      console.log(e);
+      console.error(e);
       throw e;
     }
   }
 
   async editOne(id, body) {
     try {
-      const project = await this.#projectRepository.getOne(id);
+      const project = await this.getOne(id);
       if (!body.name) {
         body.name = project.name;
       }
@@ -48,11 +47,12 @@ export class ProjectService {
       if (!body.done) {
         body.done = project.done;
       }
+      await this.#projectRepository.editOne(id, body);
+      const proj = await this.getOne(id);
 
-      const editProject = await this.#projectRepository.editOne(id, body);
-      return (editProject);
+      return proj.dataValues;
     } catch (e) {
-      console.log(e);
+      console.error(e);
       throw e;
     }
   }
@@ -61,7 +61,16 @@ export class ProjectService {
     try {
       return await this.#projectRepository.addTask(idProject, idTask);
     } catch (e) {
-      console.log(e);
+      console.error(e);
+      throw e;
+    }
+  }
+
+  async getTasksProject(idProject) { // new 24/05
+    try {
+      return await this.#projectRepository.getTasksProject(idProject);
+    } catch (e) {
+      console.error(e);
       throw e;
     }
   }
@@ -70,7 +79,7 @@ export class ProjectService {
     try {
       await this.#projectRepository.deleteProject(id);
     } catch (e) {
-      console.log(e);
+      console.error(e);
       throw e;
     }
   }
@@ -79,7 +88,7 @@ export class ProjectService {
     try {
       await this.#projectRepository.deleteTaskInProject(idProject, idTask);
     } catch (e) {
-      console.log(e);
+      console.error(e);
       throw e;
     }
   }

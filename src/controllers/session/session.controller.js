@@ -6,8 +6,8 @@ export class SessionController {
 
   async register({ body }, res, next) {
     try {
-      const token = await sessionService.createUser(body);
-      res.status(201).header('Authorization', token).json({ ok: 'User created!' });
+      const obj = await sessionService.createUser(body);
+      res.status(201).header('Authorization', obj.token).json({ user: obj.user });
     } catch (e) {
       console.log(e);
       if (e.name === 'SequelizeUniqueConstraintError') {
@@ -22,7 +22,8 @@ export class SessionController {
   async login({ body }, res, next) {
     try {
       const token = await sessionService.authenticateUser(body);
-      res.status(201).header('Authorization', token).json({ token: token });
+      console.log(token);
+      res.status(200).header('Authorization', token).json({ token: token });
     } catch (e) {
       console.log(e);
       res.json({ message: 'Ocurrió un error' });

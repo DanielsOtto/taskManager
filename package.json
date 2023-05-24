@@ -6,7 +6,8 @@
   "main": "src/app/main.js",
   "scripts": {
     "start": "node .",
-    "test": "nodemon ."
+    "test": "nodemon .",
+    "testM": "nodemon --exec mocha --recursive"
   },
   "keywords": [],
   "author": "",
@@ -18,11 +19,16 @@
     "express": "^4.18.2",
     "express-session": "^1.17.3",
     "jsonwebtoken": "^9.0.0",
-    "morgan": "^1.10.0",
     "mysql2": "^3.2.4",
     "passport": "^0.6.0",
     "passport-local": "^1.0.0",
     "pino": "^8.14.1",
     "sequelize": "^6.31.1"
+  },
+  "devDependencies": {
+    "axios": "^1.4.0",
+    "chai": "^4.3.7",
+    "mocha": "^10.2.0",
+    "morgan": "^1.10.0"
   }
 }

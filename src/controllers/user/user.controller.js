@@ -17,7 +17,7 @@ export class UserController {
     const { id } = user;
     try {
       const project = await userService.saveProject(id, idP);
-      res.status(200).json(project);
+      res.status(200).json({ Project: project });
     } catch (e) {
       console.error(e);
       res.status(400).json(e.message);
@@ -31,7 +31,19 @@ export class UserController {
       res.status(200).json({ Projects: projects });
     } catch (e) {
       console.error(e);
-      res.status(400).json(e.message);
+      res.status(404).json(e.message);
+    }
+  }
+
+  async getProjectById({ user, params }, res, next) {
+    const { id } = user;
+    const { idP } = params;
+    try {
+      const project = await userService.getProjectById(id, idP);
+      res.status(200).json({ project: project });
+    } catch (e) {
+      console.error(e);
+      res.status(404).json(e.message);
     }
   }
 
@@ -47,12 +59,15 @@ export class UserController {
     }
   }
 
-  async saveTask({ user, body }, res, next) {
+  async saveTask({ user, body }, res, next) { // quiero modificar esto
+    // la idea es que solo agregue una tarea si 
+    // tanto la tarea como el usuario estan vinculados con el mismo 
+    // PROYECTO
     const { id } = user;
     const { idTask } = body;
     try {
       const task = await userService.saveTask(id, idTask);
-      res.status(200).json({ 'Add task': task });
+      res.status(200).json({ Task: task });
     } catch (e) {
       console.error(e);
       res.status(400).json(e.message);
@@ -64,6 +79,18 @@ export class UserController {
     try {
       const tasks = await userService.getAllTasks(id);
       res.status(200).json({ 'Added task ': tasks });
+    } catch (e) {
+      console.error(e);
+      res.status(404).json('no se encontro nada');
+    }
+  }
+
+  async getUserTaskById({ user, params }, res, next) {
+    const { id } = user;
+    const { idT } = params;
+    try {
+      const task = await userService.getUserTaskById(id, idT);
+      res.status(200).json(task);
     } catch (e) {
       console.error(e);
       res.status(404).json('no se encontro nada');

@@ -27,7 +27,16 @@ export class UserService {
 
   async getAllProjects(id) {
     try {
-      return await this.#userList.getAllProjects(id);
+      return await this.#userList.getAllUserProjects(id); // cambiado el nombre 23/05
+    } catch (e) {
+      console.error(e);
+      throw e;
+    }
+  }
+
+  async getProjectById(id, idP) {
+    try {
+      return await this.#userList.getProjectById(id, idP);
     } catch (e) {
       console.error(e);
       throw e;
@@ -43,7 +52,7 @@ export class UserService {
     }
   }
 
-  async saveTask(id, idTask) {
+  async saveTask(id, idTask) { // quiero modificar esto
     try {
       return await this.#userList.saveTask(id, idTask);
     } catch (e) {
@@ -61,6 +70,15 @@ export class UserService {
     }
   }
 
+  async getUserTaskById(idU, idT) {
+    try {
+      return await this.#userList.getUserTaskById(idU, idT);
+    } catch (e) {
+      console.error(e);
+      throw e;
+    }
+  }
+
   async deleteUserTask(id, idTask) {
     try {
       return await this.#userList.deleteUserTask(id, idTask);
@@ -69,6 +87,4 @@ export class UserService {
       throw e;
     }
   }
-
-
 }

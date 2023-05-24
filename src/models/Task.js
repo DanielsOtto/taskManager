@@ -1,6 +1,5 @@
 import { DataTypes, UUIDV4 } from 'sequelize';
 import db from '../database/sequelize.db.js';
-import Tag from './Tag.js';
 // EL ID LO CREAMOS EN EL SERVICIO
 
 
@@ -26,6 +25,5 @@ const Task = db.define('Task', {
   }
 }, { tableName: 'tasks' });
 
-Task.hasMany(Tag);
 
 export default Task;

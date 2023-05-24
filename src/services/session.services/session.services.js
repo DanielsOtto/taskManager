@@ -16,7 +16,11 @@ export class SessionService {
       if (!user) {
         throw new Error('credenciales incorrectas ?')
       }
-      return generateToken(user.id, user.email);
+      const token = generateToken(user.id, user.email);
+      return {
+        user,
+        token
+      };
     } catch (e) {
       console.log(e);
       throw e;

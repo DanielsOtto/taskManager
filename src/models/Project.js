@@ -1,8 +1,7 @@
 import { DataTypes } from 'sequelize';
 import db from '../database/sequelize.db.js';
-import Task from './Task.js';
+// import Task from './Task.js';
 // EL ID LO CREA EL MODELO
-
 
 const Project = db.define('Project', {
   id: {
@@ -26,6 +25,6 @@ const Project = db.define('Project', {
 }, { tableName: 'projects' });
 
 
-Project.hasMany(Task);
+// Project.hasMany(Task);
 export default Project;
 // Project.belongsToMany(User, { through: UserProject });

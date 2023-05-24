@@ -15,7 +15,7 @@ dotenv.config();
 // //   user: 'root',
 // //   database: 'tasks'
 // // }; no va
-
+export const PORT = process.env.PORT;
 
 export const HASH_SECRET = process.env.HASH_SECURITY + process.env.SALT_ROUNDS + process.env.LINE_SECRET;
 

@@ -35,7 +35,7 @@ export class TaskServices {
 
   async editTask(id, { name, description, done }) {
     try {
-      await this.#taskRepository.editTask(id, name, description, done);
+      return await this.#taskRepository.editTask(id, name, description, done);
     } catch (e) {
       console.error(e);
       throw e;

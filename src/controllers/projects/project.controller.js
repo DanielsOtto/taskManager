@@ -8,10 +8,10 @@ export class ProjectController {
   async getAll(req, res, next) {
     try {
       const projs = await projectService.getAll();
-      res.status(200).json({ Projects: projs });
+      res.status(200).json({ projects: projs });
     } catch (e) {
       console.error(e);
-      res.status(404).json({ Projects: 'No projects' });
+      res.status(404).json({ projects: 'No projects' });
       // throw e;
     }
   }
@@ -20,10 +20,10 @@ export class ProjectController {
     const { id } = params;
     try {
       const project = await projectService.getOne(id);
-      res.status(200).json({ Project: project });
+      res.status(200).json({ project: project });
     } catch (e) {
       console.error(e);
-      res.status(404).json({ Project: 'Not found' });
+      res.status(404).json({ project: 'Not found' });
       // throw e;
     }
   }
@@ -31,7 +31,7 @@ export class ProjectController {
   async saveOne({ body }, res, next) {
     try {
       const project = await projectService.saveOne(body);
-      res.status(201).json({ projectCreated: project });
+      res.status(201).json({ project: project });
     } catch (e) {
       console.error(e);
       throw e;
@@ -42,8 +42,8 @@ export class ProjectController {
     const { id } = params;
     // validar body
     try {
-      await projectService.editOne(id, body);
-      res.status(200).json({ Edit: body });
+      const edited = await projectService.editOne(id, body);
+      res.status(200).json({ Edit: edited });
       // const project = await projectService
     } catch (e) {
       console.error(e);
@@ -54,14 +54,25 @@ export class ProjectController {
 
   async addTask({ params, body }, res, next) {
     const { id_project } = params;
-    const { id } = body;
+    const { idT } = body;
     try {
-      const task = await projectService.addTask(id_project, id);
-      res.status(200).json(task);
+      const task = await projectService.addTask(id_project, idT);
+      res.status(200).json({ task: task });
     } catch (e) {
       console.error(e);
       res.status(400).json(e.message);
       // next(e);
+    }
+  }
+
+  async getTasksProject({ params }, res, next) { // nuevo 24/05
+    const { id_project } = params;
+    try {
+      const tasks = await projectService.getTasksProject(id_project);
+      res.status(200).json({ tasks: tasks });
+    } catch (e) {
+      console.error(e);
+      res.status(404).json(e.message);
     }
   }
 
@@ -78,9 +89,9 @@ export class ProjectController {
 
   async deleteTaskInProject({ params, body }, res, next) {
     const { id_project } = params;
-    const { id } = body;
+    const { idT } = body;
     try {
-      await projectService.deleteTaskInProject(id_project, id);
+      await projectService.deleteTaskInProject(id_project, idT);
       res.status(200).json(`Task deleted in project with ID: ${id_project}`);
     } catch (e) {
       console.error(e);

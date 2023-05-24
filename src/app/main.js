@@ -1,10 +1,11 @@
 // import { connectSQL } from '../database/mysql.js';
+import { PORT } from '../config/config.js';
 import createServer from '../server/index.js';
 
 const server = createServer();
 
 try {
-  await server.connect({ port: 8080 }); // cambiar puerto
+  await server.connect({ port: PORT });
   // connectSQL();
 } catch (e) {
   console.error(e);

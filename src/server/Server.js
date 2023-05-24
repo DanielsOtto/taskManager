@@ -5,11 +5,9 @@ import routerSession from '../routers/session.router.js';
 import routerUser from '../routers/user.router.js';
 import routerProject from '../routers/project.router.js';
 import routerTask from '../routers/task.router.js';
-// // import passport from 'passport';
-// // import session from 'express-session';
-// // import { SESSION_OPTIONS } from '../config/config.js';
-// // import '../models/User.js'; // no va, es solo para ver si anda 
-
+import '../models/ProjectTask.js';
+import '../models/UserProject.js';
+import '../models/UserTask.js';
 
 export class Server {
   #app;
@@ -28,7 +26,7 @@ export class Server {
       await db.sync();
       console.log('Database online!');
     } catch (e) {
-      console.log(e);
+      console.error(e);
       throw new Error(e);
     }
   }
@@ -37,9 +35,6 @@ export class Server {
     this.#app.use(morgan('dev'));
     this.#app.use(express.json());
     this.#app.use(express.urlencoded({ extended: true }));
-    // this.#app.use(session(SESSION_OPTIONS));
-    // this.#app.use(passport.initialize());
-    // this.#app.use(passport.session());
   }
 
   routes() {
@@ -47,7 +42,6 @@ export class Server {
     this.#app.use('/api/users/', routerUser);
     this.#app.use('/api/projects/', routerProject) // projects
     this.#app.use('/api/tasks/', routerTask); // tasks
-    // this.#app.use('/ruta5')
     // this.#app.use('/manejador Errores')
     // this.#app.use('/wrong rutas')
   }

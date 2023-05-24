@@ -1,8 +1,7 @@
 import { DataTypes } from 'sequelize';
 import db from '../database/sequelize.db.js';
-import Project from './Project.js';
-import Tag from './Tag.js';
-import Task from './Task.js';
+// import Project from './Project.js';
+// import Task from './Task.js';
 
 
 const User = db.define('User', {
@@ -39,8 +38,7 @@ const User = db.define('User', {
   }
 }, { tableName: 'users' });
 
-User.hasMany(Project);
-User.hasMany(Task);
-User.hasMany(Tag);
+// User.hasMany(Project);
+// User.hasMany(Task);
 
 export default User;

@@ -26,7 +26,7 @@ export class TaskController {
     const { id } = params;
     try {
       const task = await taskService.getOne(id);
-      res.status(200).json(task);
+      res.status(200).json({ task: task });
     } catch (e) {
       console.error(e);
       res.status(404).json(e);
@@ -36,8 +36,8 @@ export class TaskController {
   async editTask({ params, body }, res, next) {
     const { id } = params;
     try {
-      await taskService.editTask(id, body);
-      res.status(200).json({ "New task": body });
+      const update = await taskService.editTask(id, body);
+      res.status(200).json({ 'Update': update });
     } catch (e) {
       console.error(e);
       res.status(400).json(e);
