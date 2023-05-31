@@ -10,9 +10,9 @@ export class UserService {
   async getInfo({ id }) {
     try {
       return await this.#userList.findByPk(id);
-    } catch (error) {
-      console.log(e);
-      throw e;
+    } catch (e) {
+      logger.error(e);
+      next(e);
     }
   }
 

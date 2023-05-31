@@ -1,3 +1,8 @@
+import { logger } from '../../config/pino.js';
+import { NotFoundError } from '../../errors/NotFoundError.js';
+import { EmailAlreadyRegisterError } from '../../errors/EmailAlreadyRegister.js';
+import { EmptyCollection } from '../../errors/EmptyCollection.js';
+
 export class UserList {
   #table;
   #db;
@@ -11,6 +16,12 @@ export class UserList {
   }
 
   async createUser(email, password, name, lastname) {
+    try {
+      const user = await this.findByEmail(email, false);
+      if (user) throw new EmailAlreadyRegisterError(email);
+    } catch (e) {
+      throw e;
+    }
     const transaction = await this.#db.transaction();
     try {
       const newUser = await this.#table.create({
@@ -23,114 +34,103 @@ export class UserList {
 
       return newUser;
     } catch (e) {
-      console.error(e);
+      logger.error(e);
       await transaction.rollback();
-      // throw e;
     }
   }
 
   async findByEmail(email, validate = true) {
     try {
       const user = await this.#table.findOne({ where: { email: email } });
-      if (validate) {
-        if (!user) {
-          throw new Error('Usuario inexistente');
-        }
-      }
+      if (validate) if (!user) throw new NotFoundError(email);
       return user;
-      // manejador errores true or false
     } catch (e) {
-      console.error(e);
+      logger.error(e);
       throw e;
     }
   }
 
   async findByPk(id) {
     try {
-      return await this.#table.findByPk(id);
-      // manejador errores
+      const user = await this.#table.findByPk(id);
+      if (!user) throw new NotFoundError(id);
+      return user;
     } catch (e) {
-      console.error(e);
+      logger.error(e);
       throw e;
     }
   }
 
-  async getUser(id) {
-    try {
-      return await this.findByPk(id);
-    } catch (e) {
-      console.error(e);
-      throw e;
-    }
-  }
+  // async getUser(id) { // repeat -- donde se usa ?? 
+  //   try {
+  //     const user = await this.findByPk(id);
+  //     if (!user) throw new NotFoundError(user);
+  //     return user;
+  //   } catch (e) {
+  //     logger.error(e);
+  //     throw e;
+  //   }
+  // }
 
   async saveProject(id, idProject) {
     try {
-      const user = await this.getUser(id);
+      const user = await this.findByPk(id);
       const project = await this.#tableProject.getOne(idProject);
-      user && project && await user.addProject(project);
-
+      if (!project) throw new NotFoundError(id);
+      await user.addProject(project);
       return project;
     } catch (e) {
-      console.error(e);
+      logger.error(e);
       throw e;
     }
   }
 
   async getAllUserProjects(id) { // cambiado el nombre 23/05
     try {
-      const user = await this.getUser(id);
-      return await user.getProjects();
+      const user = await this.findByPk(id);
+      const projects = await user.getProjects();
+      if (projects.length === 0) throw new EmptyCollection(); //DEBERIA DAR 204
+      return projects;
     } catch (e) {
-      console.error(e);
+      logger.error(e);
       throw e;
     }
   }
 
-  async getProjectById(idUser, idProject) {
+  async getProjectById(idUser, idProject) { // revisar en donde se usa - revisado
+    let founded = null;
     try {
-      return await this.#tableProject.getUserProject(idProject);
+      const projects = await this.getAllUserProjects(idUser);
+      const project = await this.#tableProject.getOne(idProject);
+      const array = projects.map(obj => obj.dataValues);
+      for (let x = 0; x < array.length; x++) {
+        if (array[x].id === project.id) {
+          founded = project;
+          break;
+        }
+      }
+      if (!founded) throw new NotFoundError(idProject);
+      return founded
     } catch (e) {
-      console.error(e);
+      logger.error(e);
       throw e;
     }
   }
 
   async deleteUserProject(id, idP) {
     try {
-      const user = await this.getUser(id);
+      const user = await this.findByPk(id);
       const project = await this.#tableProject.getOne(idP);
-      user && project && await user.removeProject(project);
+      await user.removeProject(project);
     } catch (e) {
-      console.error(e);
+      logger.error(e);
       throw e;
     }
   }
 
-  // async saveTask(id, idTask) { // quiero modificar esto -- ORIGINAL
-  //   try {
-  //     const user = await this.getUser(id);
-  //     // WTF WTF WTF WTF
-  //     // una PROYECTO tiene varias tareas /-/ una TAREA le pertenece a un proyecto
-  //     // una Usuario tiene varias tareas  /-/ una TAREA le pertenece a un usuario
-
-  //     // aca le asigno una tarea a un usuario
-  //     // un Proyecto TIENE un usuario
-  //     const task = await this.#tableTask.getOne(idTask);
-  //     user && task && await user.addTask(task);
-  //     return task;
-  //   } catch (e) {
-  //     console.error(e);
-  //     throw e;
-  //   }
-  // } 
-
   async saveTask(userId, taskId) { // -- NUEVO 
     try {
-      const user = await this.getUser(userId);
-      if (!user) {
-        throw new Error('El usuario no existe');
-      }
+      const user = await this.findByPk(userId);
       const projects = await user.getProjects();
       if (projects && projects.length > 0) {
         for (let project of projects) {
@@ -146,43 +146,35 @@ export class UserList {
         }
       }
       const updatedTask = await this.#tableTask.getOne(taskId);
-      if (!updatedTask) throw new Error('NO SE ENCONTRO NADA CON ESE ID !!');
+      if (!updatedTask) throw new NotFoundError(taskId);
       return updatedTask;
-    } catch (error) {
-      console.error(error);
-      throw error;
+    } catch (e) {
+      logger.error(e);
+      throw e;
     }
   }
 
 
   async getAllTasks(id) {
     try {
-      const user = await this.getUser(id);
-      return await user.getTasks();
+      const user = await this.findByPk(id);
+      const tasks = await user.getTasks();
+      if (tasks.length === 0) throw new EmptyCollection();
+      return tasks;
     } catch (e) {
-      console.error(e);
+      logger.error(e);
       throw e;
     }
   }
 
   async getUserTaskById(idU, idT) {
     try {
-      return await this.#tableTask.getUserTaskById(idU, idT);
-    } catch (e) {
-      console.error(e);
-      throw e;
-    }
-  }
-
-  async deleteUserTask(id, idTask) {
-    console.log("deleteUserTask");
-    console.log(idTask);
-    try {
-      const user = await this.getUser(id);
-      const task = await this.#tableTask.getOne(idTask);
-      console.log(task);
-      user && task && await user.removeTask(task);
-
+      const user = await this.findByPk(idU);
+      const task = await user.getTasks({
+        where: {
+          id: idT
+        }
+      });
       return task;
     } catch (e) {
       console.error(e);
@@ -190,5 +182,15 @@ export class UserList {
     }
   }
 
-
+  async deleteUserTask(id, idTask) {
+    try {
+      const user = await this.findByPk(id);
+      const task = await this.#tableTask.getOne(idTask);
+      user && task && await user.removeTask(task);
+      return task;
+    } catch (e) {
+      console.error(e);
+      throw e;
+    }
+  }
 }

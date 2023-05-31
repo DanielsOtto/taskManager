@@ -6,7 +6,7 @@
   "main": "src/app/main.js",
   "scripts": {
     "start": "node .",
-    "test": "nodemon .",
+    "test": "nodemon  .",
     "testM": "nodemon --exec mocha --recursive"
   },
   "keywords": [],
@@ -23,7 +23,9 @@
     "passport": "^0.6.0",
     "passport-local": "^1.0.0",
     "pino": "^8.14.1",
-    "sequelize": "^6.31.1"
+    "sequelize": "^6.31.1",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^4.6.3"
   },
   "devDependencies": {
     "axios": "^1.4.0",

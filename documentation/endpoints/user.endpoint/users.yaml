@@ -1,0 +1,161 @@
+components:
+  $ref: ../components/security/security.yaml
+
+paths:
+  /api/users/info:
+    get:
+      summary: User info
+      security:
+        - BearerAuth: [] # Se requiere un token de autenticación Bearer
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        "200":
+          description: User info.
+        "403":
+          description: Nonexistent token!
+        "500":
+          description: Invalid token.
+  /api/users/project:
+    post:
+      summary: Add a project to the user authorized
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+              required:
+                - id
+      responses:
+        "200":
+          description: Project added.
+        "403":
+          description: Nonexistent token!
+        "404":
+          description: ERROR, ID is not found!
+        "500":
+          description: Invalid token.
+    get:
+      summary: Get users project
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        "200":
+          description: User projects.
+        "204":
+          description: The collection is empty!
+        "403":
+          description: Nonexistent token!
+        "500":
+          description: Invalid token.
+  /api/users/project/{idP}:
+    get:
+      summary: Get user project by ID
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+              required:
+                - id
+      responses:
+        "200":
+          description: User project.
+        "401":
+          description: Invalid credentials!
+        "404":
+          description: ERROR, d9eaa0e0-dc1b-4937-a9fd-adf5895986d6 is not found!
+        "500":
+          description: Invalid token.
+    delete:
+      summary: Delete user project by ID
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+              required:
+                - id
+      responses:
+        "200":
+          description: Deleted user project.
+        "401":
+          description: Invalid credentials!
+        "404":
+          description: ERROR, d9eaa0e0-dc1b-4937-a9fd-adf5895986d6 is not found!
+        "500":
+          description: Invalid token.
+  /api/users/task:
+    post:
+      summary: Add tasks to user
+      security:
+        - BearerAuth: [] # Se requiere un token de autenticación Bearer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+              required:
+                - id
+      responses:
+        "200":
+          description: User info.
+        "400":
+          description: id is undefined
+        "400":
+          description: ERROR, ID is not found!
+        "403":
+          description: Nonexistent token!
+        "500":
+          description: Invalid token.
+    get:
+      summary: Get user tasks
+      security:
+        - BearerAuth: [] # Se requiere un token de autenticación Bearer
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        "200":
+          description: User tasks.
+        "204":
+          description: The collection is empty!
+        "403":
+          description: Nonexistent token!
+        "500":
+          description: Invalid token.

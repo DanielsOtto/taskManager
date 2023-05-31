@@ -1,13 +1,19 @@
 import morgan from 'morgan';
 import express from 'express';
+import swaggerUi from 'swagger-ui-express';
 import db from '../database/sequelize.db.js';
-import routerSession from '../routers/session.router.js';
+import specs from '../config/swaggerConfig.js';
 import routerUser from '../routers/user.router.js';
-import routerProject from '../routers/project.router.js';
 import routerTask from '../routers/task.router.js';
+import routerSession from '../routers/session.router.js';
+import routerProject from '../routers/project.router.js';
+import '../models/UserTask.js';
 import '../models/ProjectTask.js';
 import '../models/UserProject.js';
-import '../models/UserTask.js';
+import { errorHandler } from '../middlewares/errorHandler.middleware.js';
+import { errorMiddleware } from '../middlewares/errorMiddleware.js';
+import { logger } from '../config/pino.js';
+
 
 export class Server {
   #app;
@@ -24,9 +30,9 @@ export class Server {
   async dbConnection() {
     try {
       await db.sync();
-      console.log('Database online!');
+      logger.info('Database online!');
     } catch (e) {
-      console.error(e);
+      logger.error(e);
       throw new Error(e);
     }
   }
@@ -42,18 +48,19 @@ export class Server {
     this.#app.use('/api/users/', routerUser);
     this.#app.use('/api/projects/', routerProject) // projects
     this.#app.use('/api/tasks/', routerTask); // tasks
-    // this.#app.use('/manejador Errores')
+    this.#app.use(errorMiddleware, errorHandler);
+    this.#app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
     // this.#app.use('/wrong rutas')
   }
 
   async connect({ port = 0 }) {
     return new Promise((resolve, reject) => {
       this.#server = this.#app.listen(port, () => {
-        console.log(`Conectado al puerto ${port}`);
+        logger.info(`Conectado al puerto ${port}`);
         resolve({ port });
       });
       this.#server.on('error', e => {
-        console.log(`error al conectarse ${e}`);
+        logger.error(`error al conectarse ${e}`);
         reject(e);
       });
     });
@@ -63,7 +70,7 @@ export class Server {
     return new Promise((resolve, reject) => {
       this.#server.close(e => {
         if (e) {
-          console.log(`error al desconectarse ${e}`);
+          logger.info(`error al desconectarse ${e}`);
           reject(e);
         } else {
           resolve(e);

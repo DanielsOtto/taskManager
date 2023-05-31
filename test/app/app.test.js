@@ -2,7 +2,7 @@ import axios from 'axios';
 import { PORT } from '../../src/config/config.js';
 import { logger } from '../../src/config/pino.js';
 import createServer from '../../src/server/index.js';
-import { expect, assert } from 'chai';
+import { expect } from 'chai';
 import User from '../../src/models/User.js';
 import Project from '../../src/models/Project.js';
 import Task from '../../src/models/Task.js';
@@ -23,16 +23,13 @@ let idT2;
 const idP3 = 'e1cd928a-cf65-40fc-82d6-375873ba295d';
 const idT3 = '609f306a-fbfa-40a7-8063-5a4c3442e697';
 
-
 const nameP = 'ordenar las farmacias';
 const descriptionP = 'apilar los medicamentos';
-
 const nameT = 'agarrar la escoba';
 const descriptionT = 'mover las caderas al ritmo de la melodía';
 
 
 describe('Starting server', async () => {
-
   before(async () => {
     await server.connect({ port: PORT });
   });
@@ -54,12 +51,10 @@ describe('Starting server', async () => {
         email
       }
     }) //borrar el usuario manualmente ?
-
     await server.disconnect();
   });
 
   describe(' 1 - Testing USERS! -- sessions route', async () => {
-
     it('Adding USER', async () => {
       const { data, status } = await axios.post('/sessions/register', {
         email,
@@ -67,7 +62,6 @@ describe('Starting server', async () => {
         name,
         lastname
       });
-
       expect(data.user).to.exist;
       expect(data.user.email).to.exist;
       expect(data.user.password).to.exist;
@@ -81,7 +75,6 @@ describe('Starting server', async () => {
     });
 
     it('GETTING TOKEN', async () => {
-
       const { data, headers, status } = await axios.post('/sessions/login', {
         email,
         password
@@ -93,13 +86,11 @@ describe('Starting server', async () => {
   });
 
   describe('2 - TESTING PROJECTS -- ', async () => {
-
     it('ADDING PROJECTS -- in bd', async () => {
       const { data, status } = await axios.post('/projects/', {
         name: nameP,
         description: descriptionP
       });
-
       expect(data).to.exist;
       expect(data.project.id).to.exist;
       idP = data.project.id;
@@ -113,7 +104,6 @@ describe('Starting server', async () => {
 
     it('GETTING PROJECTS -- ALL -- in bd', async () => {
       const { data, status } = await axios.get('/projects/');
-
       expect(data).to.exist;
       expect(data.projects).to.exist;
       expect(status).to.equal(200);
@@ -121,7 +111,6 @@ describe('Starting server', async () => {
 
     it('GETTING PROJECT -- ONE -- in bd ', async () => {
       const { data, status } = await axios.get(`/projects/${idP}`);
-
       expect(status).to.equal(200);
       expect(data.project).to.exist;
     });
@@ -131,7 +120,6 @@ describe('Starting server', async () => {
         name: 'limpiando la canoa',
         description: descriptionP
       });
-      //me devuelve el body ! MAL  
       // console.log(data.Edit);
       expect(status).to.equal(200);
       expect(data.Edit).to.exist;
@@ -147,7 +135,6 @@ describe('Starting server', async () => {
 
     it('DELETE PROJECT  --  in  bd', async () => {
       const { data, status } = await axios.delete(`/projects/${idP}`);
-
       expect(status).to.equal(200);
       expect(data).to.equal('Deleted project');
     });
@@ -173,24 +160,19 @@ describe('Starting server', async () => {
     //     expect(data).to.exist;
     //     expect(data.projects).to.exist;
     //     expect(status).to.equal(404);
-
     //   } catch (error) {
     //     console.error("no borra todos los elementos, xq ?");
     //   }
-
     // });
-
   });
 
 
   describe('3 - TESTINGS TASKS -- ', async () => {
-
     it('ADDING  TASKS  -- in bd', async () => {
       const { data, status } = await axios.post('/tasks', {
         name: nameT,
         description: descriptionT
       });
-
       expect(data.task).to.exist;
       expect(data.task.id).to.exist;
       idT = data.task.id;
@@ -203,14 +185,12 @@ describe('Starting server', async () => {
 
     it('GETTING TASKS  - ALL - in bd', async () => {
       const { data, status } = await axios.get('/tasks');
-
       expect(data.Tasks).to.exist;
       expect(status).to.equal(200);
     });
 
     it('GETTING TASK - ONE - in bd', async () => {
       const { data, status } = await axios.get(`/tasks/${idT}`);
-
       expect(data.task).to.exist;
       expect(data.task.id).to.exist;
       expect(data.task.name).to.exist;
@@ -225,7 +205,6 @@ describe('Starting server', async () => {
       const { data, status } = await axios.put(`/tasks/${idT}`, {
         name: 'no me acuerdo que hacias aca'
       });
-
       expect(data.Update).to.exist;
       expect(data.Update).to.have.all.keys('createdAt', 'description', 'done', 'id', 'name', 'updatedAt');
       //de esta forma hay que agregar todos los campos SI O SI
@@ -239,7 +218,6 @@ describe('Starting server', async () => {
 
     it('DELETING TASK -- with ID -- in bd', async () => {
       const { data, status } = await axios.delete(`/tasks/${idT}`);
-
       expect(data).to.exist;
       expect(status).to.equals(200);
     })
@@ -247,7 +225,6 @@ describe('Starting server', async () => {
     it('GETTING TASK -- with ID -- (EMPTY BD) in bd', async () => {
       try {
         const { status } = await axios.get(`/tasks/${idT}`);
-
         expect(status).to.equals(200);
       } catch (e) {
         if (e.response && e.response.status === 404) {
@@ -261,13 +238,11 @@ describe('Starting server', async () => {
   });
 
   describe('4 - TESTING PROJECTS + TASKS -- ADDING TASKS TO PROJECTS', async () => {
-
     it('ADDING PROJECTS -- in bd', async () => {
       const { data, status } = await axios.post('/projects/', {
         name: nameP,
         description: descriptionP
       });
-
       expect(data).to.exist;
       expect(data.project.id).to.exist;
       idP2 = data.project.id;
@@ -284,7 +259,6 @@ describe('Starting server', async () => {
         name: nameT,
         description: descriptionT
       });
-
       expect(data.task).to.exist;
       expect(data.task.id).to.exist;
       idT2 = data.task.id;
@@ -307,7 +281,6 @@ describe('Starting server', async () => {
 
     it('GETTING Project Tasks ', async () => {
       const { data, status } = await axios.get(`/projects/${idP2}/task`);
-
       expect(data.tasks).to.exist;
       expect(status).to.equal(200);
     });
@@ -316,7 +289,6 @@ describe('Starting server', async () => {
       const { data, status } = await axios.delete(`/projects/${idP2}/task`, {
         data: { idT: idT2 }
       });
-
       expect(data).to.exist;
       expect(status).to.equal(200);
     });
@@ -324,7 +296,6 @@ describe('Starting server', async () => {
 
 
   describe('5 - TESTING USERS -- ADDING PROJECTS / ADDING TASKS', async () => {
-
     beforeEach(async () => {
       try {
         const { data } = await axios.post(`/sessions/login`, {
@@ -339,7 +310,6 @@ describe('Starting server', async () => {
       // Establece el token antes de cada prueba dentro de este bloque
       // Así aseguras que el token esté disponible en cada solicitud
       // ya que cada prueba se ejecuta de forma independiente
-
     });
 
     it('GETTING  Info', async () => {
@@ -348,7 +318,6 @@ describe('Starting server', async () => {
           Authorization: `${token}`
         }
       });
-
       expect(data).to.exist;
       expect(status).to.equal(200)
     });
@@ -361,7 +330,6 @@ describe('Starting server', async () => {
           Authorization: token,
         }
       });
-
       expect(data.Project).to.exist;
       expect(data.Project).to.have.all.keys('id', 'name', 'description', 'done', 'createdAt', 'updatedAt');
       expect(status).to.equal(200);
@@ -373,7 +341,6 @@ describe('Starting server', async () => {
           Authorization: token,
         }
       });
-
       expect(data.Projects).to.exist;
       expect(status).to.equal(200);
     });
@@ -384,7 +351,6 @@ describe('Starting server', async () => {
           Authorization: token,
         }
       });
-
       expect(data.project).to.exist;
       expect(data.project).to.have.all.keys('id', 'name', 'description', 'done', 'createdAt', 'updatedAt');
       expect(status).to.equal(200);
@@ -396,11 +362,9 @@ describe('Starting server', async () => {
           Authorization: token
         }
       });
-
       expect(data).to.exist;
       expect(status).to.equal(200);
     });
-
 
     it('ADDING  ONE  user  TASK', async () => {
       const { data, status } = await axios.post(`/users/task/`, {
@@ -410,27 +374,37 @@ describe('Starting server', async () => {
           Authorization: token
         }
       });
-
       expect(data.Task).to.exist;
       expect(data.Task.name).to.equal("levantar la carpa!");
       expect(status).to.equal(200);
     });
 
-
-    // it('GETTING  ALL  user  TASK');
-    // it('ADDING  ONE  user  TASK');
-    // it('DELETING  ONE  user  TASK');
+    it('GETTING  ALL  user  TASK', async () => {
+      const { data, status } = await axios.get(`/users/task`, {
+        headers: {
+          Authorization: token
+        }
+      });
+      expect(data.Tasks).to.exist;
+      expect(status).to.equal(200);
+    });
+    it('GETTING  ONE  user  TASK', async () => {
+      const { data, status } = await axios.get(`/users/task/${idT3}`, {
+        headers: {
+          Authorization: token
+        }
+      });
+      expect(data.task).to.exist;
+      expect(status).to.equal(200);
+    });
+    it('DELETING  ONE  user  TASK', async () => {
+      const { data, status } = await axios.delete(`/users/${idT3}/task`, {
+        headers: {
+          Authorization: token
+        }
+      });
+      expect(data).to.exist;
+      expect(status).to.equal(200);
+    });
   });
-
-
 });
-
-  // describe('Testing PROJECTS! -- projects route', async () => {
-  //   it('GETTING  Info', async () => {
-  //     const { data, status } = await axios.get(`http://localhost:${PORT}/api/users/info`, {
-  //       headers: {
-  //         Authorization: `${token}`
-  //       }
-  //     });
-  //   });
-// });

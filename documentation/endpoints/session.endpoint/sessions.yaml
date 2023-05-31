@@ -1,0 +1,33 @@
+paths:
+  /api/sessions/register:
+    post:
+      summary: Create user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        "201":
+          description: User created -> Object user.
+        "409":
+          description: Email is already registered.
+        "500":
+          description: Email and password are required.
+  /api/sessions/login:
+    post:
+      summary: Create user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        "201":
+          description: User token.
+        "401":
+          description: Invalid credentials!
+        "500":
+          description: Email and password are required.

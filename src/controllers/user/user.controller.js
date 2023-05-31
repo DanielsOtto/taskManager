@@ -1,3 +1,4 @@
+import { logger } from '../../config/pino.js';
 import userService from '../../services/user.services/index.js'
 
 export class UserController {
@@ -7,8 +8,8 @@ export class UserController {
       const users = await userService.getInfo(user);
       res.status(200).json({ info: users });
     } catch (e) {
-      console.log(e);
-      throw e;
+      logger.error(e);
+      next(e);
     }
   }
 
@@ -20,7 +21,7 @@ export class UserController {
       res.status(200).json({ Project: project });
     } catch (e) {
       console.error(e);
-      res.status(400).json(e.message);
+      next(e);
     }
   }
 
@@ -31,7 +32,7 @@ export class UserController {
       res.status(200).json({ Projects: projects });
     } catch (e) {
       console.error(e);
-      res.status(404).json(e.message);
+      next(e);
     }
   }
 
@@ -43,7 +44,7 @@ export class UserController {
       res.status(200).json({ project: project });
     } catch (e) {
       console.error(e);
-      res.status(404).json(e.message);
+      next(e);
     }
   }
 
@@ -52,10 +53,10 @@ export class UserController {
     const { id } = user;
     try {
       await userService.deleteUserProject(id, idP);
-      res.status(200).json('Project deleted!');
+      res.status(200).json('Deleted user project!');
     } catch (e) {
       console.error(e);
-      res.status(400).json(e.message);
+      next(e);
     }
   }
 
@@ -64,9 +65,9 @@ export class UserController {
     // tanto la tarea como el usuario estan vinculados con el mismo 
     // PROYECTO
     const { id } = user;
-    const { idTask } = body;
+    const { idT } = body;
     try {
-      const task = await userService.saveTask(id, idTask);
+      const task = await userService.saveTask(id, idT);
       res.status(200).json({ Task: task });
     } catch (e) {
       console.error(e);
@@ -78,10 +79,10 @@ export class UserController {
     const { id } = user;
     try {
       const tasks = await userService.getAllTasks(id);
-      res.status(200).json({ 'Added task ': tasks });
+      res.status(200).json({ Tasks: tasks });
     } catch (e) {
       console.error(e);
-      res.status(404).json('no se encontro nada');
+      next(e);
     }
   }
 
@@ -90,7 +91,7 @@ export class UserController {
     const { idT } = params;
     try {
       const task = await userService.getUserTaskById(id, idT);
-      res.status(200).json(task);
+      res.status(200).json({ task: task });
     } catch (e) {
       console.error(e);
       res.status(404).json('no se encontro nada');

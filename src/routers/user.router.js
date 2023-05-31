@@ -14,7 +14,7 @@ routerUser.post('/project', userController.saveProject); // agregar proyectos al
 routerUser.delete('/project/:idP', userController.deleteUserProject); // eliminar proyectos del user
 
 routerUser.get('/task', userController.getAllTasks); // listar las tareas del user
-routerUser.get('/task/:id', userController.getUserTaskById); // listar las tareas del user
+routerUser.get('/task/:idT', userController.getUserTaskById); // listar las tareas del user
 routerUser.post('/task', userController.saveTask); // agregar tareas del user
 // solo si ya esta asociado al proyecto -- MODIFICAR ESTO!
 routerUser.delete('/:idT/task', userController.deleteUserTask) // eliminar tareas del user

@@ -65,22 +65,4 @@ export class TaskList {
       throw e;
     }
   }
-
-  async getUserTaskById(idU, idT) { // agregado el 23/05
-    try {
-      const task = await this.#table.findOne({
-        where: {
-          id: idT,
-          UserId: idU
-        }
-      });
-      if (!task) {
-        throw new Error("que onda");
-      }
-      return task;
-    } catch (e) {
-      console.error(e);
-      throw e;
-    }
-  }
 }

@@ -1,4 +1,7 @@
+import { EmptyCollection } from '../../errors/EmptyCollection.js';
+import { NotFoundError } from '../../errors/NotFoundError.js';
 // listo el index -
+
 export class ProjectList {
   #table;
   #taskTable;
@@ -10,9 +13,7 @@ export class ProjectList {
   async getAll() {
     try {
       const projects = await this.#table.findAll();
-      if (projects.length === 0) {
-        throw new Error('No hay proyectos');
-      }
+      if (projects.length === 0) throw new EmptyCollection();
       return projects;
     } catch (e) {
       console.error(e);
@@ -23,9 +24,7 @@ export class ProjectList {
   async getOne(id) {
     try {
       const project = await this.#table.findByPk(id);
-      if (!project) {
-        throw new Error('ID incorrecto - No existe ese proyecto');
-      }
+      if (!project) throw new NotFoundError(id)
       return project;
     } catch (e) {
       console.error(e);
@@ -115,20 +114,20 @@ export class ProjectList {
     }
   }
 
-  async getUserProject(idP) { // agregado 23/05 
-    try {
-      const project = await this.#table.findOne({
-        where: {
-          id: idP,
-        }
-      });
-      if (!project) {
-        throw new Error('PROJECT repositorio no se encontro nada');
-      }
-      return project;
-    } catch (e) {
-      console.error(e);
-      throw e;
-    }
-  }
+  // async getUserProject(idP) { // agregado 23/05 
+  //   try {
+  //     const project = await this.#table.findOne({
+  //       where: {
+  //         id: idP,
+  //       }
+  //     });
+  //     if (!project) {
+  //       throw new Error('PROJECT repositorio no se encontro nada');
+  //     }
+  //     return project;
+  //   } catch (e) {
+  //     console.error(e);
+  //     throw e;
+  //   }
+  // }
 }
